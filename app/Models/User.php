@@ -47,12 +47,12 @@ class User extends Authenticatable
 
     public function setNameAttribute($value)
     {
-        $this->attributes['name'] = strtoupper($value);
+        $this->attributes['name'] = ucwords($value);
     }
 
     public function getNameAttribute($value)
     {
-        return $value;
+        return ucwords($value);
 
     }
 
