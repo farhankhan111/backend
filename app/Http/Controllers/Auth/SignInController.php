@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SignInRequest;
+use App\Http\Responses\ApiErrorResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ class SignInController extends Controller
             $token = auth()->user()->createToken('MyApp')->accessToken;
             return response()->json(['token' => $token], 200);
         } else {
-            return response()->json(['error' => 'Unauthorised'], 401);
+            return new ApiErrorResponse('Unauthorised','',401);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CommentRequest;
+use App\Http\Responses\ApiSuccessResponse;
 use App\Models\Comment;
 use App\Models\FeedBack;
 use Illuminate\Http\JsonResponse;
@@ -14,7 +15,7 @@ class CommentController extends Controller
     {
         $comments = Comment::where('feedback_id', $feedbackId)->get();
 
-        return response()->json(['comments' => $comments],200);
+        return new ApiSuccessResponse($comments);
     }
 
     public function store(CommentRequest $request, Feedback $feedback)//: JsonResponse
@@ -24,7 +25,7 @@ class CommentController extends Controller
 
         $comment->load('user');
 
-        return response()->json(['comment' => $comment],201);
+        return new ApiSuccessResponse($comment,[],201);
 
     }
 }

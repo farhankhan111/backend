@@ -34,4 +34,10 @@ class FeedBack extends Model
         return $this->hasMany(Comment::class,'feedback_id');
 
     }
+
+    public function logs()
+    {
+        return $this->morphMany(Log::class, 'loggable');
+    }
+
 }
