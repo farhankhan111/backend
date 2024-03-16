@@ -9,6 +9,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Roles\RolePermissionController;
 use App\Http\Controllers\Roles\RolesController;
+use App\Http\Controllers\UploadFilesController;
 use App\Http\Controllers\VoteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -49,7 +50,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('feedbacks', FeedbackController::class);
     Route::get('user-feedbacks', [FeedbackController::class, 'getUserFeedbacks']);
     Route::Resource('admin/comments', AdminCommentController::class);
-    Route::put('admin/comments/{comment}/moderate', [AdminCommentController::class, 'moderate']);
+    Route::put('admin/comments/{comment}/moderate', [AdminCommentController::class, 'moderate'])
+        ->middleware('can:moderate-comment');
     Route::Resource('admin/feedbacks', AdminFeedBackController::class);
     Route::resource('votes', VoteController::class);
 
@@ -67,6 +69,10 @@ Route::post('/roles/{role}/permissions', [RolePermissionController::class, 'assi
 Route::post('/roles/assign-roles-to-user', [RolesController::class, 'assignRole']);
 
 Route::resource('permissions', \App\Http\Controllers\Roles\PermissionController::class);
+
+
+Route::post('upload-csv', [UploadFilesController::class, 'uploadCsv']);
+
 
 
 

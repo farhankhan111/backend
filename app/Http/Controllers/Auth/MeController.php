@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PrivateUserResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -13,7 +15,11 @@ class MeController extends Controller
     {
           $user = auth::user();
 
-          return response()->json($user);
+          if($user->user_type == 'admin') {
+              return new PrivateUserResource($user);
+          } else {
+              return new UserResource($user);
+          }
     }
 
     public function apilimit(Request $request)

@@ -25,9 +25,9 @@ class RolesController extends Controller
 
     public function assignRole(Request $request){
 
-         $user = User::findOrFail($request->user_id);
+        $user = User::findOrFail($request->user_id);
 
-         $user->assignRole($request->role);
+        $user->assignRole($request->role);
 
         return new ApiSuccessResponse($user,['message' => 'role assign successfully!'],201);
     }

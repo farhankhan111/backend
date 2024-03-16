@@ -17,10 +17,10 @@ return new class extends Migration
             $table->text('message');
             $table->json('before')->nullable();
             $table->json('after')->nullable();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->morphs('loggable');
             $table->timestamps();
-            $table->foreign('created_by')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users');
         });
 
     }

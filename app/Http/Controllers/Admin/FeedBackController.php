@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateFeedbackRequest;
+use App\Http\Resources\FeedBackResource;
 use App\Http\Responses\ApiSuccessResponse;
 use App\Models\FeedBack;
+use App\Services\LogService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class FeedBackController extends Controller
 {
+    public function __construct(private LogService $logService){}
     public function index()
     {
         $feedBacks = FeedBack::with('user')->withCount([
@@ -23,7 +28,7 @@ class FeedBackController extends Controller
             ->orderby('id', 'desc')
             ->cursorPaginate(3);
 
-        return new ApiSuccessResponse($feedBacks);
+        return FeedBackResource::collection($feedBacks);
 
     }
 
@@ -36,9 +41,7 @@ class FeedBackController extends Controller
 
     public function edit($id)
     {
-        $feedBack = FeedBack::findOrFail($id);
-
-        return response()->json(['feedback' => $feedBack], 200);
+        return new FeedBackResource(FeedBack::findOrFail($id));
     }
 
     public function update(UpdateFeedbackRequest $request, Feedback $feedback)
@@ -46,23 +49,16 @@ class FeedBackController extends Controller
         $feedback->update($request->validated());
 
         return new ApiSuccessResponse($feedback,['message' => 'Feedback update successfully']);
-
     }
 
     public function destroy($id)
     {
+        $this->authorize('delete-feedback');
         $feedback = Feedback::findOrFail($id);
-
         $feedback->delete();
+        $this->logService->createLog('feedback_deleted', 'feedback deleted', $feedback);
 
-        $feedback->logs()->create([
-            'type' => 'feedback_deleted',
-            'message' => 'feedback deleted',
-            'created_by' => Auth('api')->id()
-        ]);
-
-        return new ApiSuccessResponse($feedback,['message' => 'Feedback deleted successfully'],204);
-
+        return new ApiSuccessResponse([],['message' => 'Feedback deleted successfully']);
     }
 
 }

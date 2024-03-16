@@ -2,10 +2,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FeedBackRequest;
+use App\Http\Resources\FeedBackResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
 use App\Models\FeedBack;
-use App\Models\Log;
+use App\Services\LogService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,12 @@ use Illuminate\Support\Facades\Auth;
 
 class FeedbackController extends Controller
 {
+    protected $logService;
+
+    public function __construct(LogService $logService)
+    {
+        $this->logService = $logService;
+    }
     public function index(Request $request)
     {
         $keywords = $request->input('keywords');
@@ -35,19 +42,18 @@ class FeedbackController extends Controller
 
         $feedBacks = $query->paginate(5);
 
-        return new ApiSuccessResponse($feedBacks);
-
+        return FeedBackResource::collection($feedBacks);
     }
 
     public function store(FeedBackRequest $request): mixed
     {
-        $feedback = FeedBack::create($request->validated());
+        if($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $file->move(public_path('upload'), $fileName);
+        }
 
-        $feedback->logs()->create([
-            'type' => 'feedback_created',
-            'message' => 'new feedback created',
-            'created_by' => Auth('api')->id()
-        ]);
+        $feedback = FeedBack::create($request->validated());
 
         return new ApiSuccessResponse($feedback,[],201);
     }
@@ -55,7 +61,8 @@ class FeedbackController extends Controller
     public function show($id): mixed
     {
         $feedBack = FeedBack::with([
-            'user','comments' => function ($comments) {
+            'user',
+            'comments' => function ($comments) {
                 $comments->with('user');
                 $comments->moderate();
             }
@@ -69,8 +76,7 @@ class FeedbackController extends Controller
             },
         ])->findOrFail($id);
 
-        return new ApiSuccessResponse($feedBack, ['message' => '']);
-
+        return new FeedBackResource($feedBack);
     }
 
     public function getUserFeedbacks(): mixed
@@ -79,9 +85,6 @@ class FeedbackController extends Controller
             ->where('user_id', auth('api')->id())
             ->paginate(10);
 
-        //return response()->json(['feedbacks' => $userFeedbacks]);
-
-        return new ApiSuccessResponse($userFeedbacks);
-
+        return FeedBackResource::collection($userFeedbacks);
     }
 }

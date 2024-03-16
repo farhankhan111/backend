@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Http\Responses\ApiErrorResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -39,6 +40,11 @@ class Handler extends ExceptionHandler
         if ($exception instanceof ModelNotFoundException) {
             return new ApiErrorResponse('Failed to find resource',$exception,404);
         }
+
+        if ($exception instanceof AccessDeniedHttpException) {
+            return new ApiErrorResponse('unauthorized','',403);
+        }
+
 
         return parent::render($request, $exception);
     }

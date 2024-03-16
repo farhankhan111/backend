@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Contracts\LogServiceInterface;
+use App\Models\FeedBack;
+use App\Models\User;
+use App\Observers\FeedbackObserver;
+use App\Observers\UserObserver;
+use App\Services\LogService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(LogServiceInterface::class,LogService::class);
     }
 
     /**
@@ -19,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        User::observe(UserObserver::class);
+        FeedBack::observe(FeedbackObserver::class);
+
+
     }
 }

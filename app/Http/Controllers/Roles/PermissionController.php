@@ -11,14 +11,11 @@ use Spatie\Permission\Models\Role;
 
 class PermissionController extends Controller
 {
-   function index()
-   {
-
-   }
+   function index(){}
 
     function store(Request $request)
     {
-        $permission = Permission::create(['guard_name' => 'comment', 'name' => 'moderate comment']);
+        $permission = Permission::create(['name' => 'moderate comment']);
 
         return new ApiSuccessResponse($permission,['message' => 'permission created successfully!'],201);
 

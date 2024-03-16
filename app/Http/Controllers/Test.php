@@ -9,8 +9,14 @@ class Test extends Controller
     public function index(Request $request)
     {
 
+        $route = \Route::current();
 
-        return view('test');
+        $permission = $route->getAction('permission');
+
+        print_r($permission);
+
+
+        // return view('test');
         /*$this->validate($request,[
                 'search' => 'required|string',
         ]);
@@ -19,15 +25,10 @@ class Test extends Controller
 
         TModel::create(['name'=>$a]);*/
 
-
         /*$search = $request->validate(['name' => 'required|string']);
 
         TModel::create(htmlspecialchars($search));
 
-
-
-
-
-          echo \DB::table('sql_inj')->where('id',43)->first()->name;*/
+         echo \DB::table('sql_inj')->where('id',43)->first()->name;*/
     }
 }
