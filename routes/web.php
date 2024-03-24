@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\Test;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,5 +26,5 @@ Route::get('test', [
 Route::get('/', function () {
     //phpinfo();
     return view('welcome');
-});
+});//->middleware(Test::class);
 

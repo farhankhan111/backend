@@ -28,11 +28,11 @@ class CommentController extends Controller
     {
         $comment->update(['moderate' => 1]);
 
-        try {
+       // try {
             $comment->user->notify(new CommentModeratedNotification());
-        } catch (\Exception $e) {
+       // } catch (\Exception $e) {
            // return $e->getMessage();
-        }
+       // }
 
         return new ApiSuccessResponse($comment,['message' => 'moderated'],200);
     }

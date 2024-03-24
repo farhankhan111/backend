@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BroadCastController;
 use App\Http\Controllers\Auth\MeController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SignInController;
@@ -72,6 +73,12 @@ Route::resource('permissions', \App\Http\Controllers\Roles\PermissionController:
 
 
 Route::post('upload-csv', [UploadFilesController::class, 'uploadCsv']);
+
+
+Route::get('admin/fire-broadcast', [BroadCastController::class, 'index']);
+
+
+
 
 
 
