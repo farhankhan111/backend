@@ -28,3 +28,7 @@ Route::get('/', function () {
     return view('welcome');
 });//->middleware(Test::class);
 
+Route::get('/two', function () {
+    return view('welcome');
+});
+
